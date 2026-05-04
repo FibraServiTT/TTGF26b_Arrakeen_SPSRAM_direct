@@ -33,8 +33,8 @@ wheels = [
 
 [[package]]
 name = "c4m-flexmem"
-version = "0.1.1.dev84+g800ba0b"
-source = { git = "https://gitlab.com/Chips4Makers/c4m-flexmem?rev=dev_SRAM#800ba0bb930577fc180867192b980c91432a2a08" }
+version = "0.1.1.dev85+gd183db4"
+source = { git = "https://gitlab.com/Chips4Makers/c4m-flexmem?rev=dev_SRAM#d183db45ea5437c181ccda8bfe80fee34da506aa" }
 dependencies = [
     { name = "c4m-flexcell" },
     { name = "pdkmaster" },
@@ -42,8 +42,8 @@ dependencies = [
 
 [[package]]
 name = "c4m-pdk-sky130"
-version = "0.2.8.dev14+g9757c09"
-source = { git = "https://gitlab.com/Chips4Makers/c4m-pdk-sky130?rev=dev#9757c09c788f8c5df7a9122fa739b98ea694cb47" }
+version = "0.2.8.dev16+g7913f37"
+source = { git = "https://gitlab.com/Chips4Makers/c4m-pdk-sky130?rev=dev#7913f37cca4f3ef3b5ac6a1aad2e9aae147852b0" }
 dependencies = [
     { name = "c4m-flexcell" },
     { name = "c4m-flexio" },

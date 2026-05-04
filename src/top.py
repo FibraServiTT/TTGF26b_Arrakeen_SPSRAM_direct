@@ -23,7 +23,7 @@ class Top(TTTemplate1X1):
         ckt = self.circuit
         nets = ckt.nets
 
-        memfab = sky130.SPSRAMFactory(lib=self.fab.lib)
+        memfab = sky130.SPSRAMFactory(thin_layout=False, lib=self.fab.lib)
         mem_cell = memfab.block(words=128, word_size=8, we_size=1, cell_name="SRAM128x8")
 
         mem = ckt.instantiate(mem_cell, name="mem")
