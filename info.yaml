@@ -17,9 +17,8 @@ project:
 
   # List your project's source files here. Source files must be in ./src and you must list each source file separately, one per line:
   source_files:
-    - "template.py"
-    - "generate_layout.py"
-    - "behavioural.v"
+    - "generate_views.py"
+    - "tt_um_c4m_spsram_direct.v"
 
 pinout:
   # Inputs

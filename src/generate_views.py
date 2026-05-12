@@ -2,45 +2,53 @@
 # SPDX-License-Identifier: Apache-2.0
 from typing import Any
 
-from pdkmaster.io.klayout import export2db
+from pdkmaster.io.klayout import merge, export2db
 
 from c4m.pdk import sky130
+prims = sky130.tech.primitives
 
 import pya
 pya: Any
 
-from top import Top
+#
+# Generate the block in a library
+#
+print("Generating block")
 
+prefix = "SP6T"
+cell_name = "SRAM128x8"
 
-sp = pya.ShapeProcessor()
-ep = pya.EdgeProcessor()
+lib = sky130.Library(name=f"{prefix}{cell_name}")
+memfab = sky130.SPSRAMFactory(lib=lib, name_prefix=prefix)
+mem_cell = memfab.block(words=128, word_size=8, we_size=1, cell_name=cell_name)
 
-OR = pya.EdgeProcessor.ModeOr
-AND = pya.EdgeProcessor.ModeAnd
-NOT = pya.EdgeProcessor.ModeANotB
+# Be sure layout has been generated
+mem_cell.layout
+# Merge shapes
+merge(lib)
 
-lib = sky130.Library(name="TTSKY_SRAM")
-fab = sky130.CellFactory(lib=lib)
-top = Top(fab=fab)
-lib.cells += top
+#
+# Export to GDS
+#
+print("Exporting GDS file")
 
-kltech = pya.Technology()
-klsaveopt = kltech.save_layout_options.dup()
-klsaveopt.write_context_info = False
-
+# Export to klayout
 kldb = export2db(
     lib, gds_layers=sky130.gds_layers,
     add_pin_label=True,
-    merge=True,
 )
 
-def get_hier(cell, layer_idx):
+# Post-process file for npc layer etc
+sp = pya.ShapeProcessor()
+OR = pya.EdgeProcessor.ModeOr
+
+# support code
+def region_hier(cell, layer_idx):
     s = pya.Shapes()
     sp.merge(kldb, cell, layer_idx, s, True, 0, True, True)
     return pya.Region(s)
 
 # Get the layer numbers
-
 idx_nwell = kldb.layer(64, 20)
 idx_diff = kldb.layer(65, 20)
 idx_tap = kldb.layer(65, 44)
@@ -113,11 +121,11 @@ for cell in kldb.each_cell():
     ## Remove psdm too close to or covering poly licon
     ## Use hierarchical poly licon, diff and psdm
     #
-    r_diff_hier = get_hier(cell, idx_diff)
+    r_diff_hier = region_hier(cell, idx_diff)
     r_psdm = pya.Region(cell.shapes(idx_psdm))
-    r_psdm_hier = get_hier(cell, idx_psdm)
-    r_licon_hier = get_hier(cell, idx_licon)
-    r_poly_hier = get_hier(cell, idx_poly)
+    r_psdm_hier = region_hier(cell, idx_psdm)
+    r_licon_hier = region_hier(cell, idx_licon)
+    r_poly_hier = region_hier(cell, idx_poly)
 
     # Don't remove psdm needed for diff enclosure
     r_keep = r_diff_hier.sized(1000*minenc_diff_impl)
@@ -148,7 +156,7 @@ for cell in kldb.each_cell():
     s_psdm.insert(r_psdm - r_removed)
 
 # Fix npc min. space on top level
-cell = kldb.cell(top.name)
+cell = kldb.cell(mem_cell.name)
 
 s_npc_all = pya.Shapes()
 sp.size(kldb, cell, idx_npc, s_npc_all, 0.0, 0.0, OR, True, True, True)
@@ -157,4 +165,23 @@ eps = pya.Region(s_npc_all).space_check(1000*mins_npc, False, pya.Metrics.Square
 for edgepair in eps:
     s_npc.insert(edgepair.bbox())
 
-kldb.write(f"gds/{top.name}.gds")
+kldb.write(f"gds/{lib.name}.gds")
+
+#
+# Export LEF view
+#
+print("Exporting LEF file")
+
+with open(f"lef/{lib.name}.lef", "w") as f:
+    f.write(mem_cell.lef(prim_lookup={
+        prims["li"]: "li1",
+        prims["m1"]: "met1",
+        prims["m2"]: "met2",
+    }))
+
+# Export verilog view
+#
+print("Exporting behavioural verilog")
+
+with open(f"verilog/{lib.name}.v", "w") as f:
+    f.write(mem_cell.verilog())
