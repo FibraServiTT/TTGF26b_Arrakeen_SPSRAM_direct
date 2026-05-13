@@ -1,0 +1,65 @@
+meta:
+  flow: Classic
+  substituting_steps:
+    OpenROAD.IRDropReport: null
+
+DESIGN_NAME: tt_um_c4m_spsram_direct
+
+VERILOG_FILES:
+- dir::src/tt_um_c4m_spsram_direct.v
+
+FP_DEF_TEMPLATE: dir::def/tt_block_1x1_pg.def
+
+FP_SIZING: absolute
+DIE_AREA: [0, 0, 161.000, 111.520]
+
+RT_MAX_LAYER: met4
+FP_PDN_MULTILAYER: False
+
+PDN_CFG: dir::pdn/pdn_cfg.tcl
+PDN_VOFFSET: 10
+PDN_VPITCH: 30
+
+# Clock
+CLOCK_PORT: clk
+CLOCK_PERIOD: 50 # 20 MHz clock
+
+# Save some more core area
+TOP_MARGIN_MULT: 1
+BOTTOM_MARGIN_MULT: 1
+
+LEFT_MARGIN_MULT: 4
+RIGHT_MARGIN_MULT: 4
+
+# X should be multiple of 0.46 (Metal2 pitch)
+# Y should be multiple of 0.68 (Metal3 pitch)
+FP_MACRO_HORIZONTAL_HALO: expr::(0.46 * 8)
+FP_MACRO_VERTICAL_HALO: expr::(0.68 * 4)
+
+# Make sure the PDN is not cut off
+PDN_HORIZONTAL_HALO: 0
+PDN_VERTICAL_HALO: 0
+
+# Make sure only the actual pins
+# is written as LEF pins
+MAGIC_WRITE_LEF_PINONLY: true
+
+MACROS:
+  SP6TSRAM128x8:
+    gds:
+      - dir::gds/SP6TSRAM128x8.gds
+    lef:
+      - dir::lef/SP6TSRAM128x8.lef
+    nl:
+      - dir::verilog/SP6TSRAM128x8.v
+    instances:
+      mem:
+        location: [3, 3]
+        # Flip and rotate so that the pins are easy to access
+        orientation: S
+
+PDN_MACRO_CONNECTIONS:
+- "mem VPWR VGND vdd vss"
+
+ERROR_ON_ILLEGAL_OVERLAPS: False
+
