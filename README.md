@@ -16,6 +16,7 @@ Install Nix for LibreLane: https://librelane.readthedocs.io/en/stable/installati
 
 Enable a Nix shell with dev branch of LibreLane: `nix shell github:librelane/librelane/dev`
 
-Build the design: `librelane config.yaml`
+Build the design: `librelane --pdk gf180mcuD --skip Magic.DRC config.yaml`  
+(`--skip Magic.DRC` is needed as the magic DRC check gives some false positives for minimum area for the implants.)
 
 View the design in OpenROAD: `librelane config.yaml --last-run --flow OpenInOpenROAD`

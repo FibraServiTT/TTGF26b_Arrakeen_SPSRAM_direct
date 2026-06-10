@@ -5,13 +5,13 @@ description = "Single port SRAM with pins connected directly to TT tile pins."
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "c4m-pdk-sky130>=0.2.7",
+    "c4m-pdk-gf180mcu>=0.0.11",
 ]
 
 [dependency-groups]
 dev = [
     "c4m-flexmem",
-    "c4m-pdk-sky130",
+    "c4m-pdk-gf180mcu",
     "pdkmaster",
     "pdkmaster-io-coriolis>=0.1.0.post1",
     "pdkmaster-io-spice",
@@ -19,6 +19,6 @@ dev = [
 
 [tool.uv.sources]
 pdkmaster = { git = "https://gitlab.com/Chips4Makers/PDKMaster", rev = "dev_SRAM" }
-c4m-pdk-sky130 = { git = "https://gitlab.com/Chips4Makers/c4m-pdk-sky130", rev = "dev" }
+c4m-pdk-gf180mcu = { git = "https://gitlab.com/Chips4Makers/c4m-pdk-gf180mcu", rev = "dev" }
 c4m-flexmem = { git = "https://gitlab.com/Chips4Makers/c4m-flexmem", rev = "dev_SRAM" }
 pdkmaster-io-spice = { git = "https://gitlab.com/Chips4Makers/pdkmaster-io-spice", rev = "dev_SRAM" }

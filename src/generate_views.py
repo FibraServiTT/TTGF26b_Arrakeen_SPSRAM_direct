@@ -4,8 +4,8 @@ from typing import Any
 
 from pdkmaster.io.klayout import merge, export2db
 
-from c4m.pdk import sky130
-prims = sky130.tech.primitives
+from c4m.pdk import gf180mcu
+prims = gf180mcu.tech.primitives
 
 import pya
 pya: Any
@@ -18,8 +18,8 @@ print("Generating block")
 prefix = "SP6T"
 cell_name = "SRAM128x8"
 
-lib = sky130.Library(name=f"{prefix}{cell_name}")
-memfab = sky130.SPSRAMFactory(lib=lib, name_prefix=prefix)
+lib = gf180mcu.Library(name=f"{prefix}{cell_name}")
+memfab = gf180mcu.SPSRAMFactory(lib=lib, name_prefix=prefix)
 mem_cell = memfab.block(words=128, word_size=8, we_size=1, cell_name=cell_name)
 
 # Be sure layout has been generated
@@ -34,7 +34,7 @@ print("Exporting GDS file")
 
 # Export to klayout
 kldb = export2db(
-    lib, gds_layers=sky130.gds_layers,
+    mem_cell, gds_layers=gf180mcu.gds_layers,
     add_pin_label=True,
 )
 
@@ -173,11 +173,12 @@ kldb.write(f"gds/{lib.name}.gds")
 print("Exporting LEF file")
 
 with open(f"lef/{lib.name}.lef", "w") as f:
-    f.write(mem_cell.lef(prim_lookup={
-        prims["li"]: "li1",
-        prims["m1"]: "met1",
-        prims["m2"]: "met2",
-    }))
+    # f.write(mem_cell.lef(prim_lookup={
+    #     prims["li"]: "li1",
+    #     prims["m1"]: "met1",
+    #     prims["m2"]: "met2",
+    # }))
+    f.write(mem_cell.lef())
 
 # Export verilog view
 #

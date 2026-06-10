@@ -197,4 +197,4 @@ add_pdn_connect \
 
 add_pdn_connect \
     -grid macro \
-    -layers "$::env(PDN_VERTICAL_LAYER) met2"
+    -layers "$::env(PDN_VERTICAL_LAYER) Metal3"
