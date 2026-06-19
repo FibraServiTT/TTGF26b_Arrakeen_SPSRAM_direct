@@ -32,7 +32,7 @@ jobs:
           uv sync
           mkdir gds lef verilog
           uv run src/generate_views.py
-          nix run github:librelane/librelane/dev -- --pdk gf180mcuD --skip Magic.DRC config.yaml
+          nix run github:librelane/librelane/00eebe1f84ea88507acb9ff83c8431fb5e89689c -- --pdk gf180mcuD --skip Magic.DRC config.yaml
           cp runs/*/final/gds/* gds/
           cp runs/*/final/lef/* lef/
           egrep -v '(ifdef|endif)' runs/*/final/vh/* > verilog/`basename runs/*/final/vh/*`
